@@ -1,7 +1,8 @@
 /*
 Programme of playfair cipher...
-NOTE: Strings in java are immutable so at line no. 174 we've to use a char-array
+NOTE: Strings in java are immutable so at line no. 175 we've to use a char-array
 to replace some specific characters from the string...
+Every input must be in lowercase...
 */
 package practical.pkg3.ins.playfaircipher;
 import java.io.*;
