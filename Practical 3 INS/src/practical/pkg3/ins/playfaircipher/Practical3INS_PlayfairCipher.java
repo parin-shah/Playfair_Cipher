@@ -1,9 +1,9 @@
 /*
-Programme of playfair cipher...
-NOTE: Strings in java are immutable so at line no. 175 we've to use a char-array
-to replace some specific characters from the string...
-Every input must be in lowercase...
+Programme of PlayFair cipher...
+NOTE: Strings in java are immutable so i had to use StringBuilder
+      to replace some specific characters from the string...
 */
+
 package practical.pkg3.ins.playfaircipher;
 import java.io.*;
 
@@ -46,14 +46,14 @@ public class Practical3INS_PlayfairCipher
             x = 'i';
         }
         
-        for(int i=0; i<5; i++)  //row
+ label1:for(int i=0; i<5; i++)  //row
         {
             for(int j=0; j<5; j++)  //coloumn
             {
                 if(x == chararray[i][j])
                 {
                     coloumn = j;
-                    break;
+                    break label1;
                 }
             }
         }        
@@ -64,19 +64,19 @@ public class Practical3INS_PlayfairCipher
     {
         int row = 0;
         
-        if(x == 'j')    //because we use 5*5 matrix & alphabets are 26 so i is used for i & j
+        if(x == 'j')    //because we r using 5*5 matrix & alphabets are 26 so i is used to encrypt i & j
         {
             x = 'i';
         }
                 
-        for(int i=0; i<5; i++)  //row
+ label2:for(int i=0; i<5; i++)  //row
         {
             for(int j=0; j<5; j++)  //coloumn
             {
                 if(x == chararray[i][j])
                 {
                     row = i;
-                    break;
+                    break label2;	//no need to iterate further
                 }
             }
         }        
@@ -90,8 +90,8 @@ public class Practical3INS_PlayfairCipher
         String alphabet = "abcdefghiklmnopqrstuvwxyz";
         String key = "";   //given key
         String key_noduplicate = "";    //to remove duplication
-        String alphabet_XOR_key = "";   //will remove the chars which is present in both alphabet and key_noduplicate
-        String plaintxt_first = "";        
+        String alphabet_XOR_key = "";   //will remove the common chars of alphabet and key_noduplicate
+        String plaintxt = "";        
         String ciphertxt = "";         
         int i, j, k = 0, coloumn_odd = 0, row_odd = 0, coloumn_even = 0, row_even = 0;
         char evenchar = 0, oddchar = 0;
@@ -101,11 +101,12 @@ public class Practical3INS_PlayfairCipher
         
         System.out.println("Enter the KEY:");
         key = input.readLine();
+        key = key.toLowerCase();    //LowerCase
         System.out.println("\n");
         
         key_noduplicate = prac3.Remove_Duplication(key);    //will remove redudancy from key
         
-        /* module_1: The next part of code will do an XOR operation between key_noduplicate & alphabet */
+        /* MODULE 1: The next part of code will do an XOR operation between key_noduplicate & alphabet */
         
         for(i=0; i<alphabet.length(); i++)  //"abdfghiklmpqstvwxyz" here
         {
@@ -122,15 +123,15 @@ public class Practical3INS_PlayfairCipher
                 alphabet_XOR_key = alphabet_XOR_key.concat(String.valueOf(alphabet.charAt(i)));
             }
         }
-        /* module_1: end */
+        /* MODULE 1: end */
                 
-        System.out.println("Enter the Plain Text");
-        plaintxt_first = input.readLine();
+        System.out.println("Enter the Plain Text:");
+        plaintxt = input.readLine();
         System.out.println("\n");
-                
-        plaintxt_first = plaintxt_first.replaceAll("\\s", ""); //will delete the White space        
+        plaintxt = plaintxt.toLowerCase();  //converted to lowercase
+        plaintxt = plaintxt.replaceAll("\\s", ""); //delete spaces        
         
-        /* module_2: will insert characters to the keyarray[] */  
+        /* MODULE 2: insertion of characters to the keyarray[] */  
         
         for(i=0; i<5; i++)  //row
         {
@@ -138,7 +139,7 @@ public class Practical3INS_PlayfairCipher
             {
                 if(((5*i) + j) < key_noduplicate.length())   //6 here
                 {
-                    keyarray[i][j] = key_noduplicate.charAt((5*i) + j);   //because j's value can't be more than 4, 5 is there because we are using 5*5 matrix
+                    keyarray[i][j] = key_noduplicate.charAt((5*i) + j);   //because j's value can't be more than 4, 5 is is the size of coloumn.
                 }
                 
                 else if(((5*i) + j) >= key_noduplicate.length())
@@ -148,7 +149,7 @@ public class Practical3INS_PlayfairCipher
                 }                       
             }
         }        
-        /* module_2: end */ 
+        /* MODULE 2: end */ 
         
         System.out.println("MATRIX:");        
         for(i=0; i<5; i++)  //row
@@ -160,45 +161,47 @@ public class Practical3INS_PlayfairCipher
             System.out.println("");
         }
         System.out.println("\n");
-                
-        //if total no. is odd we've to add "x" its a rule so that we can make TWO-TWO pair
         
-        if(plaintxt_first.length()%2 != 0)
-        {
-            plaintxt_first = plaintxt_first.concat(String.valueOf("x"));    
-        }
+        /* one of the rule which states if in an even-odd(because index starts from no. 0)
+           pair both chars are same than the odd one will become "x" */
         
-/*--->*/System.out.println("For odd no. of characters:\n"+plaintxt_first);
-        System.out.println("\n");
+        StringBuilder nnTOnxnx = new StringBuilder(plaintxt);
         
-        //one of the rule which states if in an even-odd(because it starts from 0) pair both chars are same than the odd one will become x
-        char[] nn_to_nx = plaintxt_first.toCharArray();
-        
-        for(i=0; i<plaintxt_first.length(); i++)  
+        for(i=0; i<plaintxt.length(); i++)  
         {            
             if(i%2 == 0)    //even (because it starts from i=0)
             {
-                evenchar = nn_to_nx[i];
+                evenchar = plaintxt.charAt(i);
             }
             else    //odd
             {                
-                oddchar = nn_to_nx[i];
+                oddchar = plaintxt.charAt(i);
             }
             
-            if(i%2 != 0)
+            if(i%2 != 0)    //odd
             {
                 if(evenchar == oddchar)
                 {
-                     nn_to_nx[i] = 'x';
+                    nnTOnxnx.insert(i, 'x');
+                    plaintxt = nnTOnxnx.toString();
                 }
             }
-        }        
-        String plaintxt = new String(nn_to_nx);
+        }
         
 /*--->*/System.out.println("For same characters in Even-Odd pair:\n"+plaintxt);
-        System.out.println("\n");  
-
-        /* module_3: encryption starts */        
+        System.out.println("\n");         
+                
+        //if total no. is odd we've to add "x" at the end of the line.
+        
+        if(plaintxt.length()%2 != 0)
+        {
+            plaintxt = plaintxt.concat(String.valueOf("x"));    
+        }
+        
+/*--->*/System.out.println("For odd no. of characters:\n"+plaintxt);
+        System.out.println("\n");
+        
+        /* MODULE 3: encryption starts */        
         
         for(i=0; i<plaintxt.length(); i++)
         {
@@ -260,12 +263,8 @@ public class Practical3INS_PlayfairCipher
                 }
             }
         }
-        /* module_3: end */ 
+        /* MODULE 3: end */ 
         
         System.out.println("Cipher-Text:\n"+ciphertxt);   
     }    
-}       
-             
-             
-               
-    
+}
